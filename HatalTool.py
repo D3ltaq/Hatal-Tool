@@ -19,7 +19,6 @@ R = sys.argv[1]
 
 def toolRequirements():
     try:
-        os.system("sudo apt install python")
         os.system("sudo apt install python-pip")
         os.system("sudo pip install builtwith")
         os.system("sudo pip install requests")
