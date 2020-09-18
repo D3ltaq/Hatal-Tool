@@ -137,42 +137,41 @@ def waybackmachineAPI(urlTOtest):
         if scanResults:
             with open(outputFile, 'wb') as f:
                 f.write(scanResults)
-            print "-V-Task Waybackmachine: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+            print "-V-Task: Waybackmachine successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
         else:
-            print("-V-Task Waybackmachine: successfully ended: Found nothing")
+            print("-V-Task: Waybackmachine successfully ended: Found nothing")
     except Exception as e:
         print e
 
 
-def dirsearchScan(urlTOtest, extention="PHP"):
+def dirsearchScan(urlTOtest):
     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
         outputFile = "dirseach-" + urlTOtest + "-" + scanTime + ".txt"
-        print "-*-Task dirsearch: started on " + urlTOtest
+        print "-*-Task: dirsearch started on " + urlTOtest
+        print programming_lang
         globalExt = "html,htm,js,old,zip,rar,7z,bak,bac,backup,tmp,conf,config,xml,json,class,exe,BAC,BACKUP,BAK,orig,temp,ts,txt"
         phpExt = "php,ini,inc,tar.gz,php3,php4.php5,pht,phtm"
-        test = "html,shtnl"
         javaExt = "Jsp,jspf,jar,war,ear,jsf,do,action,xhtml"
         aspExt = "asp,aspx,asmx,dll,cs,csproj,vb,vbproj,axd,ashx,ascx,svc,inc,config,master"
         coldfusionExt = "cfm,cfc," + javaExt
-        if extention == "php" or "PHP":
+        if re.match(r'(?i)php', programming_lang, re.IGNORECASE):
             extentions = globalExt + "," +phpExt
-        elif extention == "Java":
+        elif re.match(r'(?i)java', programming_lang, re.IGNORECASE):
             extentions = globalExt + "," + javaExt
-        elif extention == "ASP" or "ASP.NET" or "ASP.net":
+        elif re.match(r'(?i)asp.net', programming_lang, re.IGNORECASE):
             extentions = globalExt + aspExt
-        elif extention == "ColdFusion":
+        elif re.match(r'(?i)coldfusion', programming_lang, re.IGNORECASE):
             extentions = globalExt + coldfusionExt
         else:
             extentions = globalExt
-        # TO BE CONTINUED
         fuzzList = "dirsearch/db/testlist.txt"
         command = "python3 dirsearch/dirsearch.py -u https://" + urlTOtest + " -e " + extentions + " --threads=5 -w " + fuzzList + " --plain-text-report=" + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
         results = process.communicate()[0]
         # print results
-        print "-V-Task dirsearch: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+        print "-V-Task: dirsearch successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
     except Exception as e:
         print e
 
