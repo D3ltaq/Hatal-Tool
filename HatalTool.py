@@ -88,11 +88,8 @@ def sublist3r(urlTOtest):
     except Exception as e:
         print e
 
-
-def netcraftDNSlookup(urlTOtest):
-    X = requests.get("https://searchdns.netcraft.com/?restriction=site+contains&host=" + urlTOtest + "&position=limited")
-    X = requests.get("https://sitereport.netcraft.com/?url=" + urlTOtest)
-    print X.text
+def scyllaLEAKED(urlTOtest):
+    pass
 
 
 def builtwithScan(urlTOtest):
@@ -202,10 +199,9 @@ def URLtoTEST():    # demo.testfire.net  Delta9testapp.io    wordpress.com
 def goGUYS(urlTOtest):
     # q.append((nmapScan, urlTOtest))
     # q.append((niktoScan, urlTOtest))
-    # q.append((netcraftDNSlookup, urlTOtest))
-    q.append((testsslScan, urlTOtest))
-    q.append((sublist3r, urlTOtest))
-    q.append((builtwithScan, urlTOtest))
+    # q.append((testsslScan, urlTOtest))
+    # q.append((sublist3r, urlTOtest))
+    # q.append((builtwithScan, urlTOtest))
     # q.append((waybackmachineAPI, urlTOtest))
     # q.append((dirsearchScan, urlTOtest))
     pass
