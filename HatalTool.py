@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import time
 import json
@@ -8,10 +9,9 @@ import subprocess
 import requests
 import builtwith
 
-
 q = Queue.deque()
 used = []
-functions = 5
+functions = 6
 programming_lang = ""
 waybackList = ""
 R = sys.argv[1]
@@ -35,13 +35,13 @@ def toolRequirements():
 
 def nmapScan(urlTOtest):
     try:
-        scanTime = (time.strftime("%H:%M-%d.%m.%Y"))    # Get Time-stamp
-        outputFile = "Nmap-" + urlTOtest + "-" + scanTime + ".txt"  # output file value
-        print "-*-Task Nmap: started on " + urlTOtest
-        command = "nmap " + urlTOtest + " -sS -sV -Pn -oN ./" + outputFile
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)     # creating the subprocess with the command
+        scanTime = (time.strftime("%H:%M-%d.%m.%Y"))  # Get Time-stamp
+        outputFile = urlTOtest + "/Nmap-" + urlTOtest + "-" + scanTime + ".txt"  # output file value
+        print "[-*-] - Task: Nmap: started on " + urlTOtest
+        command = "nmap " + urlTOtest + " -sS -sV -p 80,443 -oN ./" + outputFile
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)  # creating the subprocess with the command
         process.wait()  # wait until the subprocess finishes
-        print "-V-Task Nmap: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+        print "[ V ] - Task: Nmap: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
     except Exception as e:
         print e
 
@@ -49,12 +49,12 @@ def nmapScan(urlTOtest):
 def niktoScan(urlTOtest):
     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
-        outputFile = "Nikto-" + urlTOtest + "-" + scanTime + ".txt"
-        print "-*-Task Nikto: started on " + urlTOtest
+        outputFile = urlTOtest + "/Nikto-" + urlTOtest + "-" + scanTime + ".txt"
+        print "[-*-] - Task: Nikto: started on " + urlTOtest
         command = "nikto -h " + urlTOtest + " -output " + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
-        print "-V-Task Nikto: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+        print "[ V ] - Task: Nikto: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
     except Exception as e:
         print e
 
@@ -62,12 +62,12 @@ def niktoScan(urlTOtest):
 def testsslScan(urlTOtest):
     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
-        outputFile = "testssl-" + urlTOtest + "-" + scanTime + ".html"
-        print "-*-Task Testssl: started on " + urlTOtest
+        outputFile = urlTOtest + "/testssl-" + urlTOtest + "-" + scanTime + ".html"
+        print "[-*-] - Task: Testssl: started on " + urlTOtest
         command = "testssl.sh/testssl.sh --htmlfile " + outputFile + " " + urlTOtest
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
-        print "-V-Task Testssl: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+        print "[ V ] - Task: Testssl: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
     except Exception as e:
         print e
 
@@ -75,17 +75,18 @@ def testsslScan(urlTOtest):
 def sublist3r(urlTOtest):
     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
-        outputFile = "Sublist3r-" + urlTOtest + "-" + scanTime + ".txt"
-        print "-*-Task Sublist3r: started on " + urlTOtest
+        outputFile = urlTOtest + "/Sublist3r-" + urlTOtest + "-" + scanTime + ".txt"
+        print "[-*-] - Task: Sublist3r: started on " + urlTOtest
         command = "python Sublist3r/sublist3r.py -d " + urlTOtest + " -o " + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
         results = process.communicate()[0]
         with open(outputFile, 'w') as resultFile:
             resultFile.write(results)
-        print "-V-Task Sublist3r: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+        print "[ V ] - Task: Sublist3r: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
     except Exception as e:
         print e
+
 
 def scyllaLEAKED(urlTOtest):
     pass
@@ -94,20 +95,20 @@ def scyllaLEAKED(urlTOtest):
 def builtwithScan(urlTOtest):
     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
-        outputFile = "BuiltWith-" + urlTOtest + "-" + scanTime + ".txt"
-        print "-*-Task BuiltWith: Started on " + urlTOtest
+        outputFile = urlTOtest + "/BuiltWith-" + urlTOtest + "-" + scanTime + ".txt"
+        print "[-*-] - Task: BuiltWith: Started on " + urlTOtest
         results = builtwith.parse("http://" + urlTOtest)
         with open(outputFile, 'wb') as resultFile:
             json.dump(results, resultFile, sort_keys=True, indent=4)
         try:
             i = results['programming-languages']  # get value by key from json object
-            i = json.dumps(i)   # convert to string
-            i = i.translate(None, ']["')    # remove unwanted char
-            programming_lang = i     # setting the global value
-            print "---Task BuiltWith: Programming-language is probably", programming_lang, "--> running dirsearch.py with the relevent extentions"
+            i = json.dumps(i)  # convert to string
+            i = i.translate(None, ']["')  # remove unwanted char
+            programming_lang = i  # setting the global value
+            print "[---] - Task: BuiltWith: Programming-language is probably", programming_lang, "--> running dirsearch.py with the relevent extentions"
         except Exception as e:
-            print "-x-Task BuiltWith:", e, "not found in results"
-        print "-V-Task BuiltWith: Successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+            print "[-X-] - Task BuiltWith:", e, "not found in results"
+        print "[ V ] - Task: BuiltWith: Successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
     except Exception as e:
         print e
 
@@ -125,8 +126,8 @@ def waybackurls(host, with_subs):
 def waybackmachineAPI(urlTOtest):
     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
-        outputFile = "waybackmachine-" + urlTOtest + "-" + scanTime + ".txt"
-        print "-*-Task: waybackmachine started on " + urlTOtest
+        outputFile = urlTOtest + "/waybackmachine-" + urlTOtest + "-" + scanTime + ".txt"
+        print "[-*-] - Task: waybackmachine: started on " + urlTOtest
         with_subs = False
         scanResults = waybackurls(urlTOtest, with_subs)
         scanResults = json.dumps(scanResults)
@@ -137,26 +138,26 @@ def waybackmachineAPI(urlTOtest):
         if scanResults:
             with open(outputFile, 'wb') as f:
                 f.write(scanResults)
-            print "-V-Task: Waybackmachine successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+            print "[ V ] - Task: Waybackmachine: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
         else:
-            print("-V-Task: Waybackmachine successfully ended: Found nothing")
+            print("[ V ] - Task: Waybackmachine: successfully ended: Nothing found")
     except Exception as e:
         print e
 
 
 def dirsearchScan(urlTOtest):
     try:
+        builtwithScan(urlTOtest)
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
-        outputFile = "dirseach-" + urlTOtest + "-" + scanTime + ".txt"
-        print "-*-Task: dirsearch started on " + urlTOtest
-        print programming_lang
+        outputFile = urlTOtest + "/Dirseach-" + urlTOtest + "-" + scanTime + ".txt"
+        print "[-*-] - Task: Dirsearch: started on " + urlTOtest
         globalExt = "html,htm,js,old,zip,rar,7z,bak,bac,backup,tmp,conf,config,xml,json,class,exe,BAC,BACKUP,BAK,orig,temp,ts,txt"
         phpExt = "php,ini,inc,tar.gz,php3,php4.php5,pht,phtm"
         javaExt = "Jsp,jspf,jar,war,ear,jsf,do,action,xhtml"
         aspExt = "asp,aspx,asmx,dll,cs,csproj,vb,vbproj,axd,ashx,ascx,svc,inc,config,master"
         coldfusionExt = "cfm,cfc," + javaExt
         if re.match(r'(?i)php', programming_lang, re.IGNORECASE):
-            extentions = globalExt + "," +phpExt
+            extentions = globalExt + "," + phpExt
         elif re.match(r'(?i)java', programming_lang, re.IGNORECASE):
             extentions = globalExt + "," + javaExt
         elif re.match(r'(?i)asp.net', programming_lang, re.IGNORECASE):
@@ -165,13 +166,13 @@ def dirsearchScan(urlTOtest):
             extentions = globalExt + coldfusionExt
         else:
             extentions = globalExt
+            print "[-*-] - Task: Dirsearch: uses default extention list"
         fuzzList = "dirsearch/db/testlist.txt"
-        command = "python3 dirsearch/dirsearch.py -u https://" + urlTOtest + " -e " + extentions + " --threads=5 -w " + fuzzList + " --plain-text-report=" + outputFile
+        command = "python3 dirsearch/dirsearch.py -u http://" + urlTOtest + " -e " + extentions + " --threads=1 -w " + fuzzList + " --plain-text-report=" + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
         results = process.communicate()[0]
-        # print results
-        print "-V-Task: dirsearch successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
+        print "[ V ] - Task: dirsearch: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile
     except Exception as e:
         print e
 
@@ -184,24 +185,28 @@ def banner():
      / /_/ / _` | __/ _` | | / /\/ _ \ / _ \| |
     / __  / (_| | || (_| | |/ / | (_) | (_) | |
     \/ /_/ \__,_|\__\__,_|_|\/   \___/ \___/|_|
-                                           
+
     The following.. bla bla bla... is a bla bla bla
                        """
 
 
-def URLtoTEST():    # demo.testfire.net  Delta9testapp.io    wordpress.com
-    urlTOtest = R # raw_input("Enter URI for (ex; google.com ):\n ")#Delta9testapp.io
+def URLtoTEST():  # demo.testfire.net  Delta9testapp.io    wordpress.com
+    urlTOtest = R  # raw_input("Enter URI for (ex; google.com ):\n ")#Delta9testapp.io
+    try:
+        os.mkdir(urlTOtest)
+    except Exception:
+        pass
     return urlTOtest
 
 
 def goGUYS(urlTOtest):
-    # q.append((nmapScan, urlTOtest))
-    # q.append((niktoScan, urlTOtest))
-    # q.append((testsslScan, urlTOtest))
-    # q.append((sublist3r, urlTOtest))
-    # q.append((builtwithScan, urlTOtest))
-    # q.append((waybackmachineAPI, urlTOtest))
-    # q.append((dirsearchScan, urlTOtest))
+    # q.append((builtwithScan, urlTOtest)) \\ Running through diesreach function deu to dependency on programming_lang
+    q.append((nmapScan, urlTOtest))
+    q.append((niktoScan, urlTOtest))
+    q.append((testsslScan, urlTOtest))
+    q.append((sublist3r, urlTOtest))
+    q.append((waybackmachineAPI, urlTOtest))
+    q.append((dirsearchScan, urlTOtest))
     pass
 
 
