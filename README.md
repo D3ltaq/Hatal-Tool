@@ -5,4 +5,4 @@
 2. python Hatal-Tool.py --install
 
 # usage
-python Hatal-Tool.py <URI>
+python Hatal-Tool.py "<URI>"
