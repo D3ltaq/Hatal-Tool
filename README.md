@@ -7,3 +7,8 @@
 
 # usage
 python Hatal-Tool.py domain.com
+
+
+
+notes:
+for dirsearch you will need to edit the "fuzzList" parameter within the "dirsearchScan()" function, to contain the path of your fuzz file 
