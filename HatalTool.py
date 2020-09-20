@@ -19,10 +19,6 @@ R = sys.argv[1]
 
 def toolRequirements():
     try:
-        os.system("sudo apt install python-pip")
-        os.system("sudo pip install builtwith")
-        os.system("sudo pip install requests")
-        os.system("sudo pip install six")
         os.system("git clone https://github.com/maurosoria/dirsearch.git")
         os.system("git clone https://github.com/drwetter/testssl.sh.git")
         os.system("git clone https://github.com/aboul3la/Sublist3r.git")
