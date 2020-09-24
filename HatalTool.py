@@ -11,7 +11,7 @@ import builtwith
 
 q = Queue.deque()
 used = []
-functions = 7
+functions = 6
 programming_lang = ""
 waybackList = ""
 R = sys.argv[1]
@@ -172,52 +172,6 @@ def dirsearchScan(urlTOtest):
     except Exception as e:
         print e
 
-        
-def scyllaScan(urlTOtest):
-    rawDatafile = urlTOtest + "/Leaked-rawresults.json"
-    emailfile = urlTOtest + "/emails.txt"
-    passwordsfile = urlTOtest + "/passwords.txt"
-    passhashsfile = urlTOtest + "/passhashs.txt"
-    passhashList = []
-    passwordList = []
-    emailList = []
-    url = "https://scylla.sh/search?q=email%3A%40" + urlTOtest + "&size=500"
-    headers = {"accept": "application/json", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101"}
-    responseData = requests.get(url, headers=headers)
-    jsonData = json.loads(responseData.content)
-    # exit if no results found
-    if not jsonData:
-        exit()
-    # open and saving raw data file
-    with open(rawDatafile, "w") as outputFile:
-        x = json.dumps(jsonData, sort_keys=True, indent=4,)
-        outputFile.write(x)
-    # emails
-    for i in jsonData:
-        i = i["fields"]
-        i = str(i["email"])
-        emailList.append(i)
-    with open(emailfile, "w") as outputFile:
-        for i in emailList:
-            outputFile.write(i+"\n")
-    # passwords
-    for i in jsonData:
-        if "password" in i["fields"]:
-            i = i["fields"]
-            i = str(i["password"])
-            passwordList.append(i)
-    with open(passwordsfile, "w") as outputFile:
-        for i in passwordList:
-            outputFile.write(i+"\n")
-    # passhashs
-    for i in jsonData:
-        if "passhash" in i["fields"]:
-            i = i["fields"]
-            i = str(i["passhash"])
-            passhashList.append(i)
-    with open(passhashsfile, "w") as outputFile:
-        for i in passhashList:
-            outputFile.write(i+"\n")
 
 def banner():
     print """
@@ -249,7 +203,6 @@ def goGUYS(urlTOtest):
     q.append((sublist3r, urlTOtest))
     q.append((waybackmachineAPI, urlTOtest))
     q.append((dirsearchScan, urlTOtest))
-    q.append((scyllaScan, urlTOtest))
     pass
 
 
