@@ -191,7 +191,7 @@ def dirsearchScan(urlTOtest):
         else:
             extentions = globalExt
             print "[-*-] - Task: Dirsearch: uses default extention list"
-        fuzzList = "dirsearch/db/testlist.txt"
+        fuzzList = "dirsearch/db/dicc.txt"
         command = "python3 dirsearch/dirsearch.py -u http://" + urlTOtest + " -e " + extentions + " -F --threads=1 -w " + fuzzList + " --plain-text-report=" + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
