@@ -14,6 +14,11 @@ used = []
 functions = 6
 waybackList = ""
 R = sys.argv[1]
+globalExt = "html,htm,js,old,zip,rar,7z,bak,bac,backup,tmp,conf,config,xml,json,class,exe,BAC,BACKUP,BAK,orig,temp,ts,txt"
+phpExt = "php,ini,inc,tar.gz,php3,php4.php5,pht,phtm"
+javaExt = "Jsp,jspf,jar,war,ear,jsf,do,action,xhtml"
+aspExt = "asp,aspx,asmx,dll,cs,csproj,vb,vbproj,axd,ashx,ascx,svc,inc,config,master"
+coldfusionExt = "cfm,cfc," + javaExt
 
 
 def toolRequirements():
@@ -174,11 +179,6 @@ def dirsearchScan(urlTOtest):
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
         outputFile = urlTOtest + "/Dirseach-" + urlTOtest + "-" + scanTime + ".txt"
         print "[-*-] - Task: Dirsearch: started on " + urlTOtest
-        globalExt = "html,htm,js,old,zip,rar,7z,bak,bac,backup,tmp,conf,config,xml,json,class,exe,BAC,BACKUP,BAK,orig,temp,ts,txt"
-        phpExt = "php,ini,inc,tar.gz,php3,php4.php5,pht,phtm"
-        javaExt = "Jsp,jspf,jar,war,ear,jsf,do,action,xhtml"
-        aspExt = "asp,aspx,asmx,dll,cs,csproj,vb,vbproj,axd,ashx,ascx,svc,inc,config,master"
-        coldfusionExt = "cfm,cfc," + javaExt
         if re.match(r'(?i)php', programming_lang, re.IGNORECASE):
             extentions = globalExt + "," + phpExt
         elif re.match(r'(?i)java', programming_lang, re.IGNORECASE):
