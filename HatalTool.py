@@ -12,7 +12,6 @@ import builtwith
 q = Queue.deque()
 used = []
 functions = 6
-programming_lang = ""
 waybackList = ""
 R = sys.argv[1]
 
@@ -100,7 +99,7 @@ def builtwithScan(urlTOtest):
             i = results['programming-languages']  # get value by key from json object
             i = json.dumps(i)  # convert to string
             i = i.translate(None, ']["')  # remove unwanted char
-            programming_lang = i  # setting the global value
+            return i  # returning programming language
             print "[---] - Task: BuiltWith: Programming-language is probably", programming_lang, "--> running dirsearch.py with the relevent extentions"
         except Exception as e:
             print "[-X-] - Task BuiltWith:", e, "not found in results"
@@ -171,7 +170,7 @@ def filterList(urlTOtest):
 
 def dirsearchScan(urlTOtest):
     try:
-        builtwithScan(urlTOtest)
+        programming_lang = builtwithScan(urlTOtest)  
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
         outputFile = urlTOtest + "/Dirseach-" + urlTOtest + "-" + scanTime + ".txt"
         print "[-*-] - Task: Dirsearch: started on " + urlTOtest
