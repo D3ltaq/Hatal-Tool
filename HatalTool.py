@@ -120,7 +120,7 @@ def waybackurls(host, with_subs):
 
 
 def waybackmachineAPI(urlTOtest):
-    try:
+     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
         outputFile = urlTOtest + "/waybackmachine-" + urlTOtest + "-" + scanTime + ".txt"
         print "[-*-] - Task: waybackmachine: started on " + urlTOtest
@@ -130,7 +130,9 @@ def waybackmachineAPI(urlTOtest):
         scanResults = scanResults.translate(None, '[],"')
         scanResults = scanResults.replace('https://', '\nhttps://')
         scanResults = scanResults.replace('http://', '\nhttp://')
+        global waybackList
         waybackList = scanResults
+        filterList(urlTOtest)
         if scanResults:
             with open(outputFile, 'wb') as f:
                 f.write(scanResults)
@@ -140,6 +142,32 @@ def waybackmachineAPI(urlTOtest):
     except Exception as e:
         print e
 
+ 
+def filterList(urlTOtest):
+    try:
+        # open a file
+        scanTime = (time.strftime("%H:%M-%d.%m.%Y"))  # Get Time-stamp
+        outputFile = urlTOtest + "/Send URLs from wayback to dirsearch-" + "-" + scanTime + ".txt"
+        global waybackList
+        # step 1: remove unnecessary links
+        print type(waybackList)
+        waybackList = waybackList.split('\n')
+        for line in waybackList:
+            if not re.search('original|.txt|.gif|.jpg|.svg|.swf|.jpeg|.css|.svg|.cs|.doc$', line):
+                if re.match('http://', line, re.IGNORECASE):
+                    line = line.translate(None, 'http://')
+                else:
+                    line = line.translate(None, 'https://')
+                with open(outputFile, 'a') as resultFile:
+                    resultFile.write(line + '\n')
+        # step 2:  send the new list to dirsearch
+        with open(outputFile, 'r') as resultFile:
+            for line in resultFile:
+                line = line.translate(None, '\n')
+                dirsearchScan(line)
+    except Exception as e:
+        print e
+        
 
 def dirsearchScan(urlTOtest):
     try:
@@ -164,7 +192,7 @@ def dirsearchScan(urlTOtest):
             extentions = globalExt
             print "[-*-] - Task: Dirsearch: uses default extention list"
         fuzzList = "dirsearch/db/testlist.txt"
-        command = "python3 dirsearch/dirsearch.py -u http://" + urlTOtest + " -e " + extentions + " --threads=1 -w " + fuzzList + " --plain-text-report=" + outputFile
+        command = "python3 dirsearch/dirsearch.py -u http://" + urlTOtest + " -e " + extentions + " -F --threads=1 -w " + fuzzList + " --plain-text-report=" + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
         results = process.communicate()[0]
@@ -203,6 +231,7 @@ def goGUYS(urlTOtest):
     q.append((sublist3r, urlTOtest))
     q.append((waybackmachineAPI, urlTOtest))
     q.append((dirsearchScan, urlTOtest))
+    q.append(filterList)
     pass
 
 
