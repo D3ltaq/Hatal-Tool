@@ -136,7 +136,7 @@ def waybackmachineAPI(urlTOtest):
         scanResults = scanResults.replace('http://', '\nhttp://')
         global waybackList
         waybackList = scanResults
-        filterList(urlTOtest)
+        waybackFilterList(urlTOtest)
         if scanResults:
             with open(outputFile, 'wb') as f:
                 f.write(scanResults)
@@ -147,7 +147,7 @@ def waybackmachineAPI(urlTOtest):
         print e
 
  
-def filterList(urlTOtest):
+def waybackFilterList(urlTOtest):
     try:
         # open a file
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))  # Get Time-stamp
