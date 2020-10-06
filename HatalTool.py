@@ -172,7 +172,26 @@ def waybackFilterList(urlTOtest):
     except Exception as e:
         print e
         
+        
+def scanResult(urlTOtest):
+    try:
+        scanTime = (time.strftime("%H:%M-%d.%m.%Y"))  # Get Time-stamp
+        outputFile = urlTOtest + "/dirb-" + urlTOtest + "-" + scanTime + ".txt"  # output file value
+        wordlist = urlTOtest + "/WaybackMachine-Filtered-list-" + urlTOtest + "-" + ".txt"
+        print("[-*-] - Task: Dirb: started on " + urlTOtest)
+        command = "dirb http://" + urlTOtest + " " + wordlist + " -o " + outputFile
+        process = subprocess.Popen(command, shell=True,
+                                   stdout=subprocess.PIPE)  # creating the subprocess with the command
+        process.wait()  # wait until the subprocess finishes
+        command = "dirb https://" + urlTOtest + " " + wordlist + " -o " + outputFile
+        process = subprocess.Popen(command, shell=True,
+                                   stdout=subprocess.PIPE)  # creating the subprocess with the command
+        process.wait()  # wait until the subprocess finishes
+        print("[ V ] - Task: Dirb: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile)
+    except Exception as e:
+        print(e)
 
+        
 def dirsearchScan(urlTOtest):
     try:
         programming_lang = builtwithScan(urlTOtest)  
@@ -229,6 +248,7 @@ def goGUYS(urlTOtest):
     q.append((testsslScan, urlTOtest))
     q.append((sublist3r, urlTOtest))
     q.append((waybackmachineAPI, urlTOtest))
+    q.append((scanResult, urlTOtest))
     q.append((dirsearchScan, urlTOtest))
     q.append(filterList)
     pass
