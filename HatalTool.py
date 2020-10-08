@@ -130,29 +130,69 @@ def waybackmachineAPI(urlTOtest):
         scanResults = scanResults.translate(table)
         scanResults = scanResults.replace('https://', '\nhttps://')
         scanResults = scanResults.replace('http://', '\nhttp://')
+        global waybackList
         waybackList = scanResults
+        waybackFilterList(urlTOtest)
         if scanResults:
             with open(outputFile, 'w') as f:
                 f.write(scanResults)
-            print(
-                "[ V ] - Task: Waybackmachine: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile)
+            print("[ V ] - Task: Waybackmachine: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile)
         else:
             print("[ V ] - Task: Waybackmachine: successfully ended: Nothing found")
     except Exception as e:
         print(e)
 
 
+def waybackFilterList(urlTOtest):
+    try:
+        # open a file
+        outputFile = urlTOtest + "/WaybackMachine-Filtered-list-" + urlTOtest + "-" + ".txt"
+        global waybackList
+        # step 1: remove unnecessary links
+        waybackList = waybackList.split('\n')
+        with open(outputFile, 'a') as resultFile:
+            for line in waybackList:
+                if not re.search('original|.gif|.jpg|.svg|.swf|.jpeg|.css|.svg|.cs', line):
+                    changeChar = re.compile("(http://www." + urlTOtest + ":80/|http://www." + urlTOtest + "/|http://" + urlTOtest + ":80/|http://" + urlTOtest + "/|https://www." + urlTOtest + "/|https://" + urlTOtest + "/)")
+                    line = changeChar.sub("", line)
+                    resultFile.write(line + '\n')
+        print("[ V ] - Task: waybackFilterList: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile)
+    except Exception as e:
+        print(e)
+
+
+def scanResult(urlTOtest):
+    try:
+        scanTime = (time.strftime("%H:%M-%d.%m.%Y"))  # Get Time-stamp
+        outputFile = urlTOtest + "/dirb-" + urlTOtest + "-" + scanTime + ".txt"  # output file value
+        wordlist = urlTOtest + "/WaybackMachine-Filtered-list-" + urlTOtest + "-" + ".txt"
+        print("[-*-] - Task: Dirb: started on " + urlTOtest)
+        command = "dirb http://" + urlTOtest + " " + wordlist + " -o " + outputFile
+        process = subprocess.Popen(command, shell=True,
+                                   stdout=subprocess.PIPE)  # creating the subprocess with the command
+        process.wait()  # wait until the subprocess finishes
+        command = "dirb https://" + urlTOtest + " " + wordlist + " -o " + outputFile
+        process = subprocess.Popen(command, shell=True,
+                                   stdout=subprocess.PIPE)  # creating the subprocess with the command
+        process.wait()  # wait until the subprocess finishes
+        print("[ V ] - Task: Dirb: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile)
+    except Exception as e:
+        print(e)
+
+
+globalExt = "html,htm,js,old,zip,rar,7z,bak,bac,backup,tmp,conf,config,xml,json,class,exe,BAC,BACKUP,BAK,orig,temp,ts,txt"
+phpExt = "php,ini,inc,tar.gz,php3,php4.php5,pht,phtm"
+javaExt = "Jsp,jspf,jar,war,ear,jsf,do,action,xhtml"
+aspExt = "asp,aspx,asmx,dll,cs,csproj,vb,vbproj,axd,ashx,ascx,svc,inc,config,master"
+coldfusionExt = "cfm,cfc," + javaExt
+
+
 def dirsearchScan(urlTOtest):
     try:
-        builtwithScan(urlTOtest)
+        programming_lang = builtwithScan(urlTOtest)
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
         outputFile = urlTOtest + "/Dirseach-" + urlTOtest + "-" + scanTime + ".txt"
         print("[-*-] - Task: Dirsearch: started on " + urlTOtest)
-        globalExt = "html,htm,js,old,zip,rar,7z,bak,bac,backup,tmp,conf,config,xml,json,class,exe,BAC,BACKUP,BAK,orig,temp,ts,txt"
-        phpExt = "php,ini,inc,tar.gz,php3,php4.php5,pht,phtm"
-        javaExt = "Jsp,jspf,jar,war,ear,jsf,do,action,xhtml"
-        aspExt = "asp,aspx,asmx,dll,cs,csproj,vb,vbproj,axd,ashx,ascx,svc,inc,config,master"
-        coldfusionExt = "cfm,cfc," + javaExt
         if re.match(r'(?i)php', programming_lang, re.IGNORECASE):
             extentions = globalExt + "," + phpExt
         elif re.match(r'(?i)java', programming_lang, re.IGNORECASE):
@@ -164,8 +204,8 @@ def dirsearchScan(urlTOtest):
         else:
             extentions = globalExt
             print("[-*-] - Task: Dirsearch: uses default extention list")
-        fuzzList = "dirsearch/db/testlist.txt"
-        command = "python3 dirsearch/dirsearch.py -u http://" + urlTOtest + " -e " + extentions + " --threads=1 -w " + fuzzList + " --plain-text-report=" + outputFile
+        fuzzList = "dirsearch/db/dicc.txt"
+        command = "python3 dirsearch/dirsearch.py -u http://" + urlTOtest + " -e " + extentions + " -F --threads=1 -w " + fuzzList + " --plain-text-report=" + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
         results = process.communicate()[0]
@@ -251,6 +291,7 @@ def goGUYS(urlTOtest):
     #q.append((testsslScan, urlTOtest))
     #q.append((sublist3r, urlTOtest))
     #q.append((waybackmachineAPI, urlTOtest))
+    #q.append((scanResult, urlTOtest))
     #q.append((dirsearchScan, urlTOtest))
     #q.append((scyllaScan, urlTOtest))
     pass
