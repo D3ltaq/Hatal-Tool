@@ -99,6 +99,7 @@ def builtwithScan(urlTOtest):
             i = results['programming-languages']  # get value by key from json object
             i = json.dumps(i)  # convert to string
             i = i.translate(table)  # remove unwanted char
+            global programming_lang
             programming_lang = i  # setting the global value
             print("[---] - Task: BuiltWith: Programming-language is probably", programming_lang,
                   "--> running dirsearch.py with the relevent extentions")
@@ -189,7 +190,7 @@ coldfusionExt = "cfm,cfc," + javaExt
 
 def dirsearchScan(urlTOtest):
     try:
-        programming_lang = builtwithScan(urlTOtest)
+        builtwithScan(urlTOtest)
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))
         outputFile = urlTOtest + "/Dirseach-" + urlTOtest + "-" + scanTime + ".txt"
         print("[-*-] - Task: Dirsearch: started on " + urlTOtest)
@@ -205,7 +206,7 @@ def dirsearchScan(urlTOtest):
             extentions = globalExt
             print("[-*-] - Task: Dirsearch: uses default extention list")
         fuzzList = "dirsearch/db/dicc.txt"
-        command = "python3 dirsearch/dirsearch.py -u http://" + urlTOtest + " -e " + extentions + " -F --threads=1 -w " + fuzzList + " --plain-text-report=" + outputFile
+        command = "python3 dirsearch/dirsearch.py -u https://" + urlTOtest + " -e " + extentions + " --threads=10 -w " + fuzzList + " --plain-text-report=" + outputFile
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
         results = process.communicate()[0]
