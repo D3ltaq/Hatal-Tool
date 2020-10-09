@@ -133,13 +133,13 @@ def waybackmachineAPI(urlTOtest):
         scanResults = scanResults.replace('http://', '\nhttp://')
         global waybackList
         waybackList = scanResults
-        waybackFilterList(urlTOtest)
         if scanResults:
             with open(outputFile, 'w') as f:
                 f.write(scanResults)
             print("[ V ] - Task: Waybackmachine: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile)
         else:
             print("[ V ] - Task: Waybackmachine: successfully ended: Nothing found")
+        waybackFilterList(urlTOtest)
     except Exception as e:
         print(e)
 
@@ -158,11 +158,12 @@ def waybackFilterList(urlTOtest):
                     line = changeChar.sub("", line)
                     resultFile.write(line + '\n')
         print("[ V ] - Task: waybackFilterList: successfully ended (" + urlTOtest + ") | saving results at --> " + outputFile)
+        scanWaybackResultWithDirb(urlTOtest)
     except Exception as e:
         print(e)
 
 
-def scanResult(urlTOtest):
+def scanWaybackResultWithDirb(urlTOtest):
     try:
         scanTime = (time.strftime("%H:%M-%d.%m.%Y"))  # Get Time-stamp
         outputFile = urlTOtest + "/dirb-" + urlTOtest + "-" + scanTime + ".txt"  # output file value
@@ -292,7 +293,6 @@ def goGUYS(urlTOtest):
     #q.append((testsslScan, urlTOtest))
     #q.append((sublist3r, urlTOtest))
     #q.append((waybackmachineAPI, urlTOtest))
-    #q.append((scanResult, urlTOtest))
     #q.append((dirsearchScan, urlTOtest))
     #q.append((scyllaScan, urlTOtest))
     pass
