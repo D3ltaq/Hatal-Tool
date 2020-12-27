@@ -6,7 +6,7 @@
 3. python3 Hatal-Tool.py --install
 
 # usage
-python3 Hatal-Tool.py domain.com
+python3 HatalTool.py domain.com
 
 
 
